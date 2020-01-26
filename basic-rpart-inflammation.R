@@ -4,8 +4,6 @@
 # Created on: 18.01.2020
 # http://archive.ics.uci.edu/ml/machine-learning-databases/acute/diagnosis.data
 
-# print("Hello world")
-
 training_percent <- 0.75
 seed <- 234
 
@@ -23,16 +21,12 @@ train_ind <- sample(seq_len(nrow(mydata)), size = train_size)
 train <- mydata[train_ind, ]
 test <- mydata[-train_ind, ]
 
-str(train)
-
-str(test)
-
 targ <- "dec_inflamation"
 preds <- c("temp", "nausea", "lumbar_pain", "urine_pushing", "micturition_pain", "burning")
 
 dtree <- rpart::rpart(formula = train[,targ] ~ ., data = train[,preds])
 
-# rpart.plot::rpart.plot(dtree)
+rpart.plot::rpart.plot(dtree)
 
 predictions <- predict(dtree, test)
 predictions <- ifelse(predictions >= 0.5, 1, 0)
@@ -41,7 +35,8 @@ predictions <- as.numeric(as.matrix(predictions))
 
 reference <- test$dec_inflamation
 
-table <- table(factor(predictions, levels=min(predictions):max(predictions)),
+
+table <- table(factor(reference, levels=min(predictions):max(predictions)),
       factor(predictions, levels=min(predictions):max(predictions)))
 
 print(table)
