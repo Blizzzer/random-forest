@@ -9,7 +9,7 @@
 set.seed(20)
 
 data <- as.data.frame(ggplot2::diamonds)
-data$is_at_least_premium <- sapply(data$cut, FUN = function(v) ifelse(v == "Premium" || v == "Ideal", 1, 0))
+data$over_4000 <- sapply(data$price, FUN = function(v) ifelse(v > 4000, 1, 0))
 
 
 train_size <- floor(0.85 * nrow(data))
@@ -19,17 +19,17 @@ train <- data[train_ind, ]
 test <- data[-train_ind, ]
 
 
-targ <- "is_at_least_premium"
-preds <- c("carat", "depth", "table", "price", "x", "y", "z", "clarity", "color")
+targ <- "over_4000"
+preds <- c("carat", "depth", "table", "cut", "x", "y", "z", "clarity", "color")
 dtree <- rpart::rpart(formula = train[,targ] ~ ., data = train[,preds])
 
-# rpart.plot::rpart.plot(dtree)
+rpart.plot::rpart.plot(dtree)
 
 predictions <- predict(dtree, test)
 predictions <- ifelse(predictions >= 0.5, 1, 0)
 predictions <- as.numeric(as.matrix(predictions))
 
-reference <- test$is_at_least_premium
+reference <- test$over_4000
 
 caret::confusionMatrix(data = factor(predictions, levels=min(predictions):max(predictions)),
                        reference = factor(reference, levels=min(predictions):max(predictions)))

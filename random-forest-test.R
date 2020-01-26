@@ -6,7 +6,7 @@
 set.seed(324453)
 
 data <- as.data.frame(ggplot2::diamonds)
-data$is_at_least_premium <- sapply(data$cut, FUN = function(v) ifelse(v == "Premium" || v == "Ideal", 1, 0))
+data$over_4000 <- sapply(data$price, FUN = function(v) ifelse(v > 4000, 1, 0))
 
 n_trees <- 100
 train_size <- floor(0.85 * nrow(data))
@@ -16,8 +16,8 @@ train <- data[train_ind,]
 test <- data[-train_ind,]
 
 
-targ <- "is_at_least_premium"
-possible_preds <- c("carat", "depth", "table", "price", "x", "y", "z", "clarity", "color")
+targ <- "over_4000"
+possible_preds <- c("carat", "depth", "table", "cut", "x", "y", "z", "clarity", "color")
 possible_methods <- c("anova", "poisson")
 combinations <- combn(possible_preds, 2, simplify = FALSE)
 
@@ -40,7 +40,7 @@ pred <- pred / n_trees
 
 pred <- ifelse(pred >= 0.5, 1, 0)
 
-reference <- test$is_at_least_premium
+reference <- test$over_4000
 
 caret::confusionMatrix(data = factor(pred, levels=min(pred):max(pred)),
                        reference = factor(reference, levels=min(pred):max(pred)))
