@@ -23,7 +23,7 @@ targ <- "is_at_least_premium"
 preds <- c("carat", "depth", "table", "price", "x", "y", "z", "clarity", "color")
 dtree <- rpart::rpart(formula = train[,targ] ~ ., data = train[,preds])
 
-rpart.plot::rpart.plot(dtree)
+# rpart.plot::rpart.plot(dtree)
 
 predictions <- predict(dtree, test)
 predictions <- ifelse(predictions >= 0.5, 1, 0)
